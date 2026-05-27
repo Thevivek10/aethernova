@@ -25,8 +25,9 @@ import {
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const services = [
   {
@@ -81,6 +82,28 @@ const proofItems = [
   { label: "Launch and scale disciplines", value: "24/7" }
 ];
 
+const partners = [
+  "Startup Founders",
+  "SaaS Teams",
+  "E-commerce Brands",
+  "Real Estate Firms",
+  "Healthcare Teams",
+  "Education Platforms",
+  "Fintech Products",
+  "Growth Agencies"
+];
+
+const heroVideos = [
+  "/videos/aethernova-bg-1.mp4",
+  "/videos/aethernova-bg-2.mp4"
+];
+
+const heroTypePhrases = [
+  "Builds for You",
+  "Scales for You",
+  "Drives Growth"
+];
+
 const projectTypes = [
   "Web Development",
   "Mobile App Development",
@@ -104,13 +127,20 @@ function useAetherMotion() {
       });
 
       gsap.from("[data-hero-word]", {
-        yPercent: 105,
         opacity: 0,
-        rotateX: 12,
-        duration: 1,
+        scale: 0.98,
+        duration: 0.8,
         stagger: 0.08,
-        ease: "power4.out",
+        ease: "power2.out",
         delay: 0.15
+      });
+
+      gsap.to(".accent-text", {
+        textShadow: "0 0 28px rgba(25, 214, 255, 0.58)",
+        duration: 1.8,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut"
       });
 
       gsap.from("[data-hero-copy], [data-hero-cta]", {
@@ -149,6 +179,19 @@ function useAetherMotion() {
         ease: "sine.inOut",
         stagger: 0.18
       });
+
+      const videoLayers = gsap.utils.toArray("[data-hero-video]");
+      if (videoLayers.length > 1) {
+        gsap.set(videoLayers, { opacity: 0 });
+        gsap.set(videoLayers[0], { opacity: 1 });
+
+        const videoTimeline = gsap.timeline({ repeat: -1 });
+        videoTimeline
+          .to(videoLayers[0], { opacity: 0, duration: 1.4, ease: "power2.inOut" }, 5)
+          .to(videoLayers[1], { opacity: 1, duration: 1.4, ease: "power2.inOut" }, 5)
+          .to(videoLayers[1], { opacity: 0, duration: 1.4, ease: "power2.inOut" }, 11)
+          .to(videoLayers[0], { opacity: 1, duration: 1.4, ease: "power2.inOut" }, 11);
+      }
 
       gsap.utils.toArray("[data-section]").forEach((section) => {
         gsap.from(section.querySelectorAll("[data-reveal]"), {
@@ -219,13 +262,114 @@ function useAetherMotion() {
   }, []);
 }
 
+function useSmoothAnchorScroll() {
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const handleAnchorClick = (event) => {
+      const anchor = event.target.closest('a[href^="#"]');
+      if (!anchor) return;
+
+      const hash = anchor.getAttribute("href");
+      if (!hash || hash === "#") return;
+
+      const target = document.querySelector(hash);
+      if (!target) return;
+
+      event.preventDefault();
+
+      if (reduceMotion.matches) {
+        target.scrollIntoView();
+        window.history.pushState(null, "", hash);
+        return;
+      }
+
+      const header = document.querySelector(".site-header");
+      const offsetY = (header?.offsetHeight ?? 0) + 12;
+
+      gsap.to(window, {
+        duration: 1,
+        ease: "power3.inOut",
+        scrollTo: {
+          y: target,
+          offsetY
+        },
+        onComplete: () => window.history.pushState(null, "", hash)
+      });
+    };
+
+    document.addEventListener("click", handleAnchorClick);
+    return () => document.removeEventListener("click", handleAnchorClick);
+  }, []);
+}
+
+function useTypewriterSequence(phrases, startDelay = 0) {
+  const [started, setStarted] = useState(startDelay === 0);
+  const [typeState, setTypeState] = useState({
+    deleting: false,
+    phraseIndex: 0,
+    text: ""
+  });
+
+  useEffect(() => {
+    if (started) return undefined;
+
+    const startTimeoutId = window.setTimeout(() => {
+      setStarted(true);
+    }, startDelay);
+
+    return () => window.clearTimeout(startTimeoutId);
+  }, [startDelay, started]);
+
+  useEffect(() => {
+    if (!started) return undefined;
+
+    const fullText = phrases[typeState.phraseIndex];
+    let delay = typeState.deleting ? 70 : 125;
+
+    if (!typeState.deleting && typeState.text === fullText) delay = 1200;
+    if (typeState.deleting && typeState.text === "") delay = 420;
+
+    const timeoutId = window.setTimeout(() => {
+      setTypeState((current) => {
+        const currentFullText = phrases[current.phraseIndex];
+
+        if (!current.deleting && current.text === currentFullText) {
+          return { ...current, deleting: true };
+        }
+
+        if (current.deleting && current.text === "") {
+          return {
+            deleting: false,
+            phraseIndex: (current.phraseIndex + 1) % phrases.length,
+            text: ""
+          };
+        }
+
+        const nextLength = current.deleting
+          ? current.text.length - 1
+          : current.text.length + 1;
+
+        return {
+          ...current,
+          text: currentFullText.slice(0, nextLength)
+        };
+      });
+    }, delay);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [phrases, started, typeState]);
+
+  return typeState.text;
+}
+
 function BrandMark() {
   return (
     <a className="brand" href="#top" aria-label="AetherNova home">
       <span className="brand-mark" aria-hidden="true">
         <span />
       </span>
-      <span>AetherNova</span>
+     <span>AetherNova</span>
     </a>
   );
 }
@@ -254,9 +398,6 @@ function Header() {
           <a href="#work">Proof</a>
           <a href="#contact">Contact</a>
         </nav>
-        <a className="header-action" href="#contact" data-button>
-          Start a Project
-        </a>
         <button
           className="menu-button"
           aria-label={open ? "Close navigation" : "Open navigation"}
@@ -322,31 +463,49 @@ function HeroSystem() {
   );
 }
 
+function HeroVideoBackground() {
+  return (
+    <div className="hero-video-stage" aria-hidden="true">
+      {heroVideos.map((src, index) => (
+        <video
+          className="hero-video"
+          data-hero-video
+          key={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          src={src}
+          style={{ opacity: index === 0 ? 1 : 0 }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function Hero() {
+  const typedHeroPhrase = useTypewriterSequence(heroTypePhrases, 1600);
+
   return (
     <section id="top" className="hero">
+      <HeroVideoBackground />
       <div className="hero-grid">
         <div className="hero-copy">
-          <h1 aria-label="AetherNova. Design. Engineer. Automate.">
-            <span className="line"><span data-hero-word>Aether</span><span data-hero-word className="accent-text">Nova</span></span>
-            <span className="line"><span data-hero-word>Design.</span></span>
-            <span className="line"><span data-hero-word>Engineer.</span></span>
-            <span className="line"><span data-hero-word>Automate.</span></span>
+          <h1 aria-label="Builds for you, scales for you, and drives growth.">
+            <span className="line">
+              <span className="hero-subheadline" data-hero-word>
+                {typedHeroPhrase}
+                <span className="type-cursor" aria-hidden="true" />
+              </span>
+            </span>
           </h1>
           <p data-hero-copy>
-            Digital products, AI systems, and cloud platforms built for teams that need
-            enterprise-grade execution without enterprise drag.
+            We create websites, mobile apps, SaaS platforms, and AI automation systems
+            that help your business launch faster, operate smarter, and grow exponentially.
           </p>
-          <div className="hero-actions" data-hero-cta>
-            <a className="button button-primary" href="#contact" data-button>
-              Start a Project <ArrowRight size={18} />
-            </a>
-            <a className="button button-secondary" href="#services" data-button>
-              View Services
-            </a>
-          </div>
+         
         </div>
-        <HeroSystem />
       </div>
     </section>
   );
@@ -431,6 +590,35 @@ function Proof() {
   );
 }
 
+function Partners() {
+  const partnerLoop = [...partners, ...partners];
+
+  return (
+    <section className="partners-section" aria-labelledby="partners-title" data-section>
+      <div className="partners-heading">
+        <p data-reveal>Our Partners</p>
+        <h2 id="partners-title" data-reveal>Built for teams ready to grow.</h2>
+        <span data-reveal>
+          We collaborate with ambitious teams across industries to build, automate, and scale digital products.
+        </span>
+      </div>
+      <div className="partners-marquee" data-reveal>
+        <div className="partners-track">
+          {partnerLoop.map((partner, index) => (
+            <span
+              className="partner-pill"
+              key={`${partner}-${index}`}
+              aria-hidden={index >= partners.length}
+            >
+              {partner}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Contact() {
   const [status, setStatus] = useState("");
 
@@ -461,9 +649,9 @@ function Contact() {
             business day.
           </span>
           <div className="contact-methods" data-reveal>
-            <a href="mailto:hello@aethernova.com"><Mail size={19} /> hello@aethernova.com</a>
-            <a href="tel:+14155550198"><Phone size={19} /> +1 (415) 555-0198</a>
-            <span><MapPin size={19} /> Remote-first · Serving clients worldwide</span>
+            <a href="mailto:vivekkumarch1@gmail.com"><Mail size={19} /> support@aethernova.com</a>
+            <a href="tel:+917992332371"><Phone size={19} /> +91 7992332371</a>
+            <span><MapPin size={19} /> Remote-First serving clients worldwide</span>
           </div>
         </div>
         <form className="contact-form" onSubmit={handleSubmit} data-reveal>
@@ -528,6 +716,7 @@ function Footer() {
 
 export default function App() {
   useAetherMotion();
+  useSmoothAnchorScroll();
 
   return (
     <>
@@ -537,6 +726,7 @@ export default function App() {
         <Services />
         <Process />
         <Proof />
+        <Partners />
         <Contact />
       </main>
       <Footer />
