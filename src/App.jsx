@@ -29,10 +29,10 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-const siteUrl = "https://aethernova.com";
+const siteUrl = "https://aethernova.in";
 const companyName = "AetherNova";
-const contactEmail = "support@aethernova.com";
-const contactPhone = "+91 7992332371";
+const contactEmail = "support@aethernova.in";
+const contactPhone = "+91 8707559685 / 7992332371";
 
 const servicePages = [
   {
@@ -416,14 +416,12 @@ const proofItems = [
 ];
 
 const partners = [
-  "Startup Founders",
-  "SaaS Teams",
-  "E-commerce Brands",
-  "Real Estate Firms",
-  "Healthcare Teams",
-  "Education Platforms",
-  "Fintech Products",
-  "Growth Agencies"
+  {src: "/images/citewise-logo.png"},
+  {src: "/images/32dental.png"},
+  {src: "/images/coderev-ai.png"},
+  {src: "/images/finance-ai.png"},
+  {src: "/images/courierbuddy.png"},
+
 ];
 
 const workProjects = [
@@ -937,10 +935,10 @@ function LegalModal({ title, content, onClose }) {
 function BrandMark() {
   return (
     <AppLink className="brand" href="/" aria-label="AetherNova home">
-      <span className="brand-mark" aria-hidden="true">
-        <span />
-      </span>
-      <span>AetherNova</span>
+      <div className="brand-mark" aria-hidden="true" >
+        <img src="/images/logo2.png" alt="" />
+      </div>
+    
     </AppLink>
   );
 }
@@ -1273,8 +1271,8 @@ function Partners() {
       <div className="partners-marquee" data-reveal>
         <div className="partners-track">
           {partnerLoop.map((partner, index) => (
-            <span className="partner-pill" key={`${partner}-${index}`} aria-hidden={index >= partners.length}>
-              {partner}
+            <span className="partner-pill" key={`${partner.src}-${index}`} aria-hidden={index >= partners.length}>
+              <img src={partner.src} alt="" loading="lazy" />
             </span>
           ))}
         </div>
