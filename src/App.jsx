@@ -416,12 +416,31 @@ const proofItems = [
 ];
 
 const partners = [
-  {src: "/images/citewise-logo.png"},
-  {src: "/images/32dental.png"},
-  {src: "/images/coderev-ai.png"},
-  {src: "/images/finance-ai.png"},
-  {src: "/images/courierbuddy.png"},
-
+  {
+    src: "/images/citewise-logo.png",
+    link: "https://citewise.in/",
+    name: "CiteWise"
+  },
+  {
+    src: "/images/32dental.png",
+    link: "https://www.32dentalavenue.in/",
+    name: "32 Dental"
+  },
+  {
+    src: "/images/coderev-ai.png",
+    link: "https://coderev.app/",
+    name: "CodeRev AI"
+  },
+  {
+    src: "/images/finance-ai.png",
+    link: "https://www.pfinance.ai/",
+    name: "Finance AI"
+  },
+  {
+    src: "/images/courierbuddy.png",
+    link: "https://www.courierbuddy.in/",
+    name: "CourierBuddy"
+  }
 ];
 
 const workProjects = [
@@ -1270,11 +1289,24 @@ function Partners() {
       </div>
       <div className="partners-marquee" data-reveal>
         <div className="partners-track">
-          {partnerLoop.map((partner, index) => (
-            <span className="partner-pill" key={`${partner.src}-${index}`} aria-hidden={index >= partners.length}>
-              <img src={partner.src} alt="" loading="lazy" />
-            </span>
-          ))}
+          {partnerLoop.map((partner, index) => {
+            const isDuplicate = index >= partners.length;
+
+            return (
+              <a
+                className="partner-pill"
+                href={partner.link}
+                key={`${partner.src}-${index}`}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Open ${partner.name} website`}
+                aria-hidden={isDuplicate}
+                tabIndex={isDuplicate ? -1 : 0}
+              >
+                <img src={partner.src} alt="" loading="lazy" />
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>
