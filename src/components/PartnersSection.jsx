@@ -1,13 +1,41 @@
 import React from "react";
-import { Award, CheckCircle2, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { CheckCircle2, Sparkles, Users } from "lucide-react";
 
 /**
  * PartnersSection
  * Retained and elevated partner section with dual-track infinite holographic marquee,
- * luminous cyber-pills, and interactive hover illumination.
+ * real client logos & links, luminous cyber-pills, and interactive hover illumination.
  */
 export default function PartnersSection() {
-  const partnersRow1 = [
+  const realPartners = [
+    {
+      src: "/images/citewise-logo.png",
+      link: "https://citewise.in/",
+      name: "CiteWise"
+    },
+    {
+      src: "/images/32dental.png",
+      link: "https://www.32dentalavenue.in/",
+      name: "32 Dental"
+    },
+    {
+      src: "/images/coderev-ai.png",
+      link: "https://coderev.app/",
+      name: "CodeRev AI"
+    },
+    {
+      src: "/images/finance-ai.png",
+      link: "https://www.pfinance.ai/",
+      name: "Finance AI"
+    },
+    {
+      src: "/images/courierbuddy.png",
+      link: "https://www.courierbuddy.in/",
+      name: "CourierBuddy"
+    }
+  ];
+
+  const sectorPartners = [
     "Startup Founders",
     "SaaS Scaleups",
     "Global Enterprises",
@@ -18,19 +46,8 @@ export default function PartnersSection() {
     "Venture Studios"
   ];
 
-  const partnersRow2 = [
-    "Autonomous Logistics",
-    "High-Growth Agencies",
-    "Cloud Infrastructure",
-    "Web3 Protocols",
-    "B2B Platforms",
-    "Digital Marketplaces",
-    "Robotics Engineering",
-    "Spatial Computing"
-  ];
-
-  const loop1 = [...partnersRow1, ...partnersRow1, ...partnersRow1];
-  const loop2 = [...partnersRow2, ...partnersRow2, ...partnersRow2];
+  const loop1 = [...realPartners, ...realPartners, ...realPartners, ...realPartners];
+  const loop2 = [...sectorPartners, ...sectorPartners, ...sectorPartners];
 
   return (
     <section className="partners-section" id="partners" aria-labelledby="partners-title" data-section>
@@ -48,25 +65,37 @@ export default function PartnersSection() {
           </p>
         </div>
 
-        {/* Dual Marquee Track 1 (Left to Right) */}
+        {/* Dual Marquee Track 1: Real Partner Client Logos & Links */}
         <div className="partners-marquee" data-reveal>
           <div className="partners-track partners-track-forward">
             {loop1.map((partner, idx) => (
-              <div className="partner-pill" key={`p1-${partner}-${idx}`}>
-                <span className="partner-pill-icon"><Sparkles size={13} /></span>
-                <span className="partner-pill-text">{partner}</span>
-              </div>
+              <a
+                href={partner.link}
+                target="_blank"
+                rel="noreferrer"
+                className="partner-pill partner-pill-logo"
+                key={`p1-${partner.name}-${idx}`}
+                title={`Visit ${partner.name}`}
+              >
+                <img
+                  src={partner.src}
+                  alt={`${partner.name} logo`}
+                  className="partner-logo-img"
+                  loading="lazy"
+                />
+                <span className="partner-pill-text">{partner.name}</span>
+              </a>
             ))}
           </div>
         </div>
 
-        {/* Dual Marquee Track 2 (Right to Left) */}
+        {/* Dual Marquee Track 2: Industry Categories */}
         <div className="partners-marquee partners-marquee-reverse" data-reveal>
           <div className="partners-track partners-track-reverse">
-            {loop2.map((partner, idx) => (
-              <div className="partner-pill partner-pill-alt" key={`p2-${partner}-${idx}`}>
-                <span className="partner-pill-icon"><ShieldCheck size={13} /></span>
-                <span className="partner-pill-text">{partner}</span>
+            {loop2.map((sector, idx) => (
+              <div className="partner-pill partner-pill-alt" key={`p2-${sector}-${idx}`}>
+                <span className="partner-pill-icon"><Sparkles size={13} /></span>
+                <span className="partner-pill-text">{sector}</span>
               </div>
             ))}
           </div>

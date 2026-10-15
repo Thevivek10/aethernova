@@ -32,8 +32,10 @@ import PartnersSection from "./components/PartnersSection";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const contactEmail = "support@aethernova.com";
-const contactPhone = "+91 7992332371";
+const siteUrl = "https://aethernova.in";
+const companyName = "AetherNova";
+const contactEmail = "support@aethernova.in";
+const contactPhone = "+91 8707559685 / 7992332371";
 
 export default function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -157,9 +159,8 @@ export default function App() {
       <header className={`header-dock ${scrollProgress > 0.04 ? "header-dock-scrolled" : ""}`}>
         <div className="header-inner">
           <a href="#top" className="header-brand">
-            <div className="brand-symbol">
-              <div className="brand-orbit" />
-              <div className="brand-core" />
+            <div className="brand-logo-frame">
+              <img src="/images/logo2.png" alt="AetherNova Logo" className="brand-logo-img" />
             </div>
             <span>AETHERNOVA</span>
           </a>
@@ -622,7 +623,7 @@ export default function App() {
                   </div>
                   <div>
                     <h4>Command Line</h4>
-                    <a href={`tel:${contactPhone.replace(/\s+/g, "")}`}>{contactPhone}</a>
+                    <a href={`tel:${contactPhone.split('/')[0].trim().replace(/\s+/g, "")}`}>{contactPhone}</a>
                   </div>
                 </div>
 
@@ -722,7 +723,7 @@ export default function App() {
                   </p>
                   <br />
                   <p>
-                    For project inquiries, direct SLAs, and contractual terms, please contact legal@aethernova.com or support@aethernova.com.
+                    For project inquiries, direct SLAs, and contractual terms, please contact legal@aethernova.in or support@aethernova.in.
                   </p>
                 </div>
               )}
